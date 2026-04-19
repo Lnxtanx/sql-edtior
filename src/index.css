@@ -1,0 +1,420 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
+
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96%;
+    --accent-foreground: 222.2 84% 4.9%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 217.2 91.2% 59.8%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 222.2 84% 4.9%;
+    --sidebar-primary: 217.2 91.2% 59.8%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 40% 96%;
+    --sidebar-accent-foreground: 222.2 84% 4.9%;
+    --sidebar-border: 214.3 31.8% 91.4%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 217.2 32.6% 11%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 84% 4.9%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 50%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 20%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 217.2 91.2% 59.8%;
+
+    --sidebar-background: 217.2 32.6% 11%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 217.2 91.2% 59.8%;
+    --sidebar-primary-foreground: 222.2 84% 4.9%;
+    --sidebar-accent: 217.2 32.6% 17.5%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217.2 32.6% 20%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  /* VS Code Style */
+  .modern-gray {
+    --background: 0 0% 11.8%;
+    /* #1e1e1e */
+    --foreground: 0 0% 80%;
+    /* #cccccc */
+
+    --card: 0 0% 14%;
+    /* #252526 */
+    --card-foreground: 0 0% 80%;
+
+    --popover: 0 0% 14%;
+    --popover-foreground: 0 0% 80%;
+
+    --primary: 212 100% 45%;
+    /* #007acc */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 18%;
+    /* #2d2d2d */
+    --secondary-foreground: 0 0% 80%;
+
+    --muted: 0 0% 18%;
+    --muted-foreground: 0 0% 60%;
+
+    --accent: 0 0% 18%;
+    --accent-foreground: 0 0% 80%;
+
+    --destructive: 0 62.8% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 25%;
+    /* #404040 */
+    --input: 0 0% 25%;
+    --ring: 212 100% 45%;
+
+    --sidebar-background: 0 0% 14%;
+    --sidebar-foreground: 0 0% 80%;
+    --sidebar-primary: 212 100% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 18%;
+    --sidebar-accent-foreground: 0 0% 80%;
+    --sidebar-border: 0 0% 25%;
+    --sidebar-ring: 212 100% 45%;
+  }
+
+  /* OLED / Pure Black */
+  .dark-black {
+    --background: 0 0% 0%;
+    /* #000000 */
+    --foreground: 0 0% 90%;
+    /* #e5e5e5 */
+
+    --card: 0 0% 5%;
+    /* #0d0d0d */
+    --card-foreground: 0 0% 90%;
+
+    --popover: 0 0% 5%;
+    --popover-foreground: 0 0% 90%;
+
+    --primary: 0 0% 90%;
+    /* #e5e5e5 */
+    --primary-foreground: 0 0% 0%;
+
+    --secondary: 0 0% 10%;
+    /* #1a1a1a */
+    --secondary-foreground: 0 0% 90%;
+
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 50%;
+
+    --accent: 0 0% 10%;
+    --accent-foreground: 0 0% 90%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 90%;
+
+    --border: 0 0% 15%;
+    /* #262626 */
+    --input: 0 0% 15%;
+    --ring: 0 0% 90%;
+
+    --sidebar-background: 0 0% 3%;
+    --sidebar-foreground: 0 0% 90%;
+    --sidebar-primary: 0 0% 90%;
+    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-accent: 0 0% 10%;
+    --sidebar-accent-foreground: 0 0% 90%;
+    --sidebar-border: 0 0% 15%;
+    --sidebar-ring: 0 0% 90%;
+  }
+
+  /* Midnight / Blue Gray */
+  .blue-gray {
+    --background: 222 47% 11%;
+    /* #0f172a */
+    --foreground: 214 32% 91%;
+    /* #e2e8f0 */
+
+    --card: 217 33% 17%;
+    /* #1e293b */
+    --card-foreground: 214 32% 91%;
+
+    --popover: 217 33% 17%;
+    --popover-foreground: 214 32% 91%;
+
+    --primary: 199 89% 48%;
+    /* #0ea5e9 */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 215 25% 27%;
+    /* #334155 */
+    --secondary-foreground: 214 32% 91%;
+
+    --muted: 215 25% 27%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 215 25% 27%;
+    --accent-foreground: 214 32% 91%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 215 25% 27%;
+    --input: 215 25% 27%;
+    --ring: 199 89% 48%;
+
+    --sidebar-background: 222 47% 11%;
+    --sidebar-foreground: 214 32% 91%;
+    --sidebar-primary: 199 89% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 215 25% 27%;
+    --sidebar-accent-foreground: 214 32% 91%;
+    --sidebar-border: 215 25% 27%;
+    --sidebar-ring: 199 89% 48%;
+  }
+
+  /* Dark Navy + Muted Green Focus */
+  .theme-navy-green,
+  .dark-navy-green {
+    --background: 222 47% 11%;
+    /* #0f172a */
+    --foreground: 210 40% 98%;
+    /* Light text */
+
+    --card: 222 47% 14%;
+    /* Slightly lighter navy for cards */
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 47% 14%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 150 60% 45%;
+    /* Muted Green / Emerald */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 215 25% 27%;
+    /* Slate for secondary elements */
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 215 25% 27%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 150 60% 35%;
+    /* Darker Green for hover accents */
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 62.8% 50%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 215 25% 27%;
+    --input: 215 25% 27%;
+    --ring: 150 60% 45%;
+
+    --sidebar-background: 222 47% 11%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 150 60% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 215 25% 27%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 215 25% 27%;
+    --sidebar-ring: 150 60% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom thin scrollbars */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.1);
+  border-radius: 10px;
+}
+
+.scrollbar-thin:hover::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Firefox scrollbar */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--muted-foreground) / 0.1) transparent;
+}
+
+.scrollbar-thin:hover {
+  scrollbar-color: hsl(var(--muted-foreground) / 0.3) transparent;
+}
+
+/* SQL Editor overlay textarea - MUST have invisible text but visible caret */
+.editor-textarea-hidden {
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  caret-color: #1e293b !important;
+  background: transparent !important;
+}
+
+/* Dark mode caret */
+.dark .editor-textarea-hidden {
+  caret-color: #e2e8f0 !important;
+}
+
+/* Global Scrollbar Overrides for specific components */
+.cm-scroller::-webkit-scrollbar,
+.sql-editor-scroll::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+
+.cm-scroller::-webkit-scrollbar-track,
+.sql-editor-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cm-scroller::-webkit-scrollbar-thumb,
+.sql-editor-scroll::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.15);
+  border-radius: 10px;
+}
+
+.cm-scroller:hover::-webkit-scrollbar-thumb,
+.sql-editor-scroll:hover::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.35);
+}
+
+.cm-scroller::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Firefox: thin scrollbars for CodeMirror */
+.cm-scroller {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+.cm-scroller:hover {
+  scrollbar-color: hsl(214.3 31.8% 80% / 0.35) transparent;
+}
+
+/* React Flow Controls Theme Overrides */
+.react-flow__controls {
+  box-shadow: none !important;
+  border: 1px solid hsl(var(--border)) !important;
+  border-radius: var(--radius) !important;
+  overflow: hidden;
+}
+
+.react-flow__controls-button {
+  background-color: hsl(var(--card)) !important;
+  border-bottom: 1px solid hsl(var(--border)) !important;
+  color: hsl(var(--foreground)) !important;
+  fill: hsl(var(--foreground)) !important;
+}
+
+.react-flow__controls-button:last-child {
+  border-bottom: none !important;
+}
+
+.react-flow__controls-button:hover {
+  background-color: hsl(var(--accent)) !important;
+  color: hsl(var(--accent-foreground)) !important;
+}
+
+.react-flow__controls-button svg {
+  fill: currentColor !important;
+}
+
+/* React Flow Node Animations */
+.react-flow__node {
+  /* Animate position changes smoothly */
+  transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease;
+}
+
+/* Edge Flow Animations */
+.animated-edge {
+  stroke-dasharray: 5;
+  animation: dash 1s linear infinite;
+}
+
+@keyframes dash {
+  from {
+    stroke-dashoffset: 10;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}

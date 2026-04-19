@@ -1,0 +1,1 @@
+import { parsePostgresSQL } from '../../sql-parser'; import { TEST_SQL } from './fixture.sql'; const schema = parsePostgresSQL(TEST_SQL); console.log('indexes:', schema.indexes);

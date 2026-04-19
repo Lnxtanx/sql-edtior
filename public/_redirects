@@ -1,0 +1,9 @@
+# Cloudflare Pages Redirects
+# https://developers.cloudflare.com/pages/platform/redirects/
+
+# SPA fallback - all routes go to index for client-side routing
+# This is already handled by Cloudflare Pages SPA mode
+
+# Legacy redirects can be added here when needed
+# /old-path /new-path 301
+# /legacy / 410
