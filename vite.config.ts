@@ -6,33 +6,37 @@ import path from "path";
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   base: mode === "production" ? "/" : "/",
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+      "web-worker": "identity-obj-proxy",
+    },
+  },
+  optimizeDeps: {
+    exclude: ['web-worker']
+  },
   build: {
-    // Output to dist for Cloudflare Pages
     outDir: "dist",
-    // Use directory structure compatible with Cloudflare Pages SPA
     assetsDir: "assets",
-    // Enable CSS code splitting for better caching
     cssCodeSplit: true,
-    // Manual chunks for better caching and parallel loading
+    commonjsOptions: {
+      ignore: ['web-worker']
+    },
     rollupOptions: {
       output: {
         manualChunks: {
-          // React core - loaded first
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          // CodeMirror editor - heavy but needed for editor
           'editor': [
             '@uiw/react-codemirror',
             '@codemirror/lang-sql',
             '@codemirror/merge',
             '@replit/codemirror-minimap'
           ],
-          // ER Diagram - heavy visualization
           'diagram': [
             '@xyflow/react',
             'elkjs',
             'dagre'
           ],
-          // UI components - Radix primitives
           'ui': [
             '@radix-ui/react-dialog',
             '@radix-ui/react-dropdown-menu',
@@ -43,9 +47,7 @@ export default defineConfig(({ mode }) => ({
             '@radix-ui/react-switch',
             '@radix-ui/react-slot'
           ],
-          // Query client and data
           'query': ['@tanstack/react-query', '@supabase/supabase-js'],
-          // Charts if used
           'charts': ['recharts'],
         },
       },
@@ -58,8 +60,8 @@ export default defineConfig(({ mode }) => ({
       "/api": {
         target: "http://localhost:3000",
         changeOrigin: true,
-        timeout: 600000,      // 10 minutes — agents can run long
-        proxyTimeout: 600000, // 10 minutes — don't cut SSE streams
+        timeout: 600000,
+        proxyTimeout: 600000,
       },
       "/ai-api": {
         target: "http://localhost:8001",
@@ -123,9 +125,4 @@ export default defineConfig(({ mode }) => ({
       },
     }),
   ],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
-  },
 }));
