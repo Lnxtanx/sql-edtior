@@ -96,7 +96,7 @@ export function buildFallbackMarkup(route) {
   const items = route.features.map((feature) => `<li>${feature}</li>`).join('');
 
   return [
-    '<main>',
+    `<main id="seo-content" class="sr-only" aria-label="${route.heading} Overview">`,
     `  <h1>${route.heading}</h1>`,
     `  <p>${route.intro}</p>`,
     '  <section>',

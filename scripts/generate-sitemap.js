@@ -103,12 +103,17 @@ function renderRouteHtml(template, route) {
   html = html.replace(/<link rel="canonical" href="[^"]*"\s*\/?>/i, `<link rel="canonical" href="${canonical}" />`);
   html = html.replace(
     /<script type="application\/ld\+json">[\s\S]*?<\/script>/i,
-    `<script type="application/ld+json">\n${jsonLd}\n    </script>`
+    `<script type="application\/ld\+json">\n${jsonLd}\n    </script>`
   );
-  html = html.replace(/<div id="root">[\s\S]*?<\/div>/i, `<div id="root">\n${fallbackMarkup}\n    </div>`);
+
+  // Keep root empty to prevent flicker
+  html = html.replace(/<div id="root">[\s\S]*?<\/div>/i, '<div id="root"></div>');
+
+  // Inject SEO content into the dedicated hidden container
+  html = html.replace(/<main id="seo-content"[\s\S]*?<\/main>/i, fallbackMarkup);
 
   return html;
-}
+  }
 
 function generateRouteHtml() {
   const distIndexPath = path.join(distDir, 'index.html');
