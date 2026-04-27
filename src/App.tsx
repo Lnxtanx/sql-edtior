@@ -25,7 +25,7 @@ const App = () => {
 return (
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider defaultTheme="system" enableSystem attribute="class" themes={["light", "dark", "modern-gray", "dark-black", "blue-gray"]}>
+        <ThemeProvider defaultTheme="system" enableSystem attribute="class" themes={["light", "dark", "dark-black", "blue-gray"]}>
           <AuthProvider>
             <EditorSettingsProvider>
               <TooltipProvider>

@@ -164,7 +164,10 @@ export interface TeamMembersResponse {
 
 // Invitation Review Info
 export interface InvitationInfo {
+    id: string;
     type: 'team' | 'project';
+    projectId?: string;
+    teamId?: string;
     teamName?: string;
     projectName?: string;
     inviterName: string;
@@ -421,6 +424,13 @@ export async function acceptProjectInvitation(
     return post('/api/files/projects/invitations/accept', { token });
 }
 
+export async function declineProjectInvitation(
+    projectId: string,
+    inviteId: string
+): Promise<{ success: boolean; message: string }> {
+    return post(`/api/files/projects/${projectId}/invitations/${inviteId}/decline`);
+}
+
 // =============================================================================
 // Teams API Functions
 // =============================================================================
@@ -490,6 +500,13 @@ export async function acceptTeamInvitation(
     token: string
 ): Promise<{ success: boolean; membership: any }> {
     return post<{ success: boolean; membership: any }>('/api/teams/invitations/accept', { token });
+}
+
+export async function declineTeamInvitation(
+    teamId: string,
+    inviteId: string
+): Promise<{ success: boolean; message: string }> {
+    return post(`/api/teams/${teamId}/invitations/${inviteId}/decline`);
 }
 
 /**

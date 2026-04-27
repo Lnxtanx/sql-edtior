@@ -58,7 +58,12 @@ export function ConnectionFormModal({ isOpen, onClose, editingId }: ConnectionFo
             onSuccess: (res) => {
                 if (res.success) {
                     toast.success(`Connected — ${res.serverVersion || 'OK'}`);
+                } else {
+                    toast.error(res.message || 'Connection failed');
                 }
+            },
+            onError: (err: any) => {
+                toast.error(err.message || 'Connection test failed');
             }
         });
     };

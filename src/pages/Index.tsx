@@ -192,7 +192,24 @@ export default function Index() {
     }
   };
 
-  const handleDeclineInvite = () => {
+  const handleDeclineInvite = async () => {
+    if (!inviteToken || !pendingInviteInfo) return;
+    
+    // Notify backend that user declined (improves state hygiene)
+    try {
+      if (pendingInviteInfo.type === 'project') {
+        if (pendingInviteInfo.projectId) {
+          await declineProjectInvitation(pendingInviteInfo.projectId, pendingInviteInfo.id);
+        }
+      } else {
+        if (pendingInviteInfo.teamId) {
+          await declineTeamInvitation(pendingInviteInfo.teamId, pendingInviteInfo.id);
+        }
+      }
+    } catch (e) {
+      console.warn('Backend decline failed', e);
+    }
+
     setPendingInviteInfo(null);
     setInviteToken(null);
     window.history.replaceState({}, document.title, window.location.pathname);
