@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { 
     Loader2, Mail, Shield, Trash2, UserPlus, Users, Plus, 
     Database, CheckSquare, Square, ExternalLink, Settings2,
-    Lock, Globe, Info, X
+    Lock, Globe, Info, X as CloseIcon
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -50,6 +50,8 @@ export function CollaborationSettings({ user, onNavigateToProject }: Collaborati
     const [newTeamName, setNewTeamName] = useState('');
     const [email, setEmail] = useState('');
     const [inviteRole, setInviteRole] = useState<'admin' | 'member'>('member');
+    const [submittingCreate, setSubmittingCreate] = useState(false);
+    const [submittingInvite, setSubmittingInvite] = useState(false);
 
     // ─── Data Fetching (React Query) ─────────────────────────────────────────
 
@@ -93,6 +95,24 @@ export function CollaborationSettings({ user, onNavigateToProject }: Collaborati
         enabled: !!user,
     });
 
+    // --- Connections (Shared via Projects) ---
+    const { data: allConnections = [] } = useConnections();
+
+    // Deriving shared connections: those used as default_connection_id in team projects
+    const sharedConnections = useMemo(() => {
+        if (!selectedTeamId || !allProjects.length || !allConnections.length) return [];
+        
+        // Get all unique connection IDs used by projects linked to this team
+        const teamProjectConnectionIds = new Set(
+            allProjects
+                .filter(p => p.team_id === selectedTeamId && p.default_connection_id)
+                .map(p => p.default_connection_id)
+        );
+
+        // Map them to full connection objects
+        return allConnections.filter(conn => teamProjectConnectionIds.has(conn.id));
+    }, [selectedTeamId, allProjects, allConnections]);
+
     // ─── Mutations (Optimistic Updates) ──────────────────────────────────────
 
     const toggleProjectMutation = useMutation({
@@ -127,19 +147,20 @@ export function CollaborationSettings({ user, onNavigateToProject }: Collaborati
 
     const removeMemberMutation = useMutation({
         mutationFn: (memberUserId: string) => removeTeamMember(selectedTeamId, memberUserId),
-        onMutate: async (memberUserId) => {
-            await queryClient.cancelQueries({ queryKey: queryKeys.members(selectedTeamId) });
-            const previous = queryClient.getQueryData(queryKeys.members(selectedTeamId));
-            queryClient.setQueryData(queryKeys.members(selectedTeamId), (old: any) => ({
-                ...old,
-                members: old.members.filter((m: any) => m.user_id !== memberUserId)
-            }));
-            return { previous };
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: queryKeys.members(selectedTeamId) });
+            toast.success('Member removed');
         },
-        onSuccess: () => toast.success('Member removed'),
-        onError: (err, variables, context) => {
-            queryClient.setQueryData(queryKeys.members(selectedTeamId), context?.previous);
-        }
+        onError: (err: any) => toast.error(err.message || 'Failed to remove member')
+    });
+
+    const revokeInviteMutation = useMutation({
+        mutationFn: (inviteId: string) => revokeTeamInvitation(selectedTeamId, inviteId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: queryKeys.invites(selectedTeamId) });
+            toast.success('Invitation revoked');
+        },
+        onError: (err: any) => toast.error(err.message || 'Failed to revoke invitation')
     });
 
     // ... (rest of render logic remains, but simplified to use these hooks)
@@ -151,7 +172,7 @@ export function CollaborationSettings({ user, onNavigateToProject }: Collaborati
             const { team } = await createTeam({ name: newTeamName });
             setNewTeamName('');
             setIsCreatingTeam(false);
-            await loadTeams();
+            queryClient.invalidateQueries({ queryKey: queryKeys.teams });
             setSelectedTeamId(team.id);
             toast.success('Team created successfully!');
         } catch (error) {
@@ -167,7 +188,8 @@ export function CollaborationSettings({ user, onNavigateToProject }: Collaborati
         try {
             await inviteTeamMember(selectedTeamId, { email, role: inviteRole });
             setEmail('');
-            await loadTeamData();
+            queryClient.invalidateQueries({ queryKey: queryKeys.members(selectedTeamId) });
+            queryClient.invalidateQueries({ queryKey: queryKeys.invites(selectedTeamId) });
             toast.success('Invitation sent');
         } catch (error: any) {
             toast.error(error.message || 'Failed to add team member');
@@ -178,35 +200,17 @@ export function CollaborationSettings({ user, onNavigateToProject }: Collaborati
 
     const handleRemoveMember = async (member: TeamMember) => {
         if (!selectedTeamId) return;
-        try {
-            await removeTeamMember(selectedTeamId, member.user_id);
-            setMembers(previous => previous.filter(item => item.user_id !== member.user_id));
-            toast.success('Member removed');
-        } catch (error: any) {
-            toast.error(error.message || 'Failed to remove member');
-        }
+        removeMemberMutation.mutate(member.user_id);
     };
 
     const handleRevokeInvite = async (inviteId: string) => {
         if (!selectedTeamId) return;
-        try {
-            await revokeTeamInvitation(selectedTeamId, inviteId);
-            setInvitations(previous => previous.filter(item => item.id !== inviteId));
-            toast.success('Invitation revoked');
-        } catch (error) {
-            toast.error('Failed to revoke invitation');
-        }
+        revokeInviteMutation.mutate(inviteId);
     };
 
     const handleToggleProjectTeam = async (projectId: string, isLinked: boolean) => {
         if (!selectedTeamId || !canManage) return;
-        try {
-            await updateProject(projectId, { teamId: isLinked ? null : selectedTeamId });
-            toast.success(isLinked ? 'Project removed from team' : 'Project added to team');
-            await loadTeamData();
-        } catch (error) {
-            toast.error('Failed to update project');
-        }
+        toggleProjectMutation.mutate({ id: projectId, isLinked });
     };
 
     if (!user) return (
@@ -314,7 +318,7 @@ export function CollaborationSettings({ user, onNavigateToProject }: Collaborati
                                             {invitations.filter(i => i.status === 'pending').map(i => (
                                                 <div key={i.id} className="flex items-center justify-between p-2 rounded-lg bg-amber-500/5 border border-amber-500/10">
                                                     <div className="text-xs font-medium px-2">{i.email} <span className="opacity-50 ml-1">({i.role})</span></div>
-                                                    <Button variant="ghost" size="icon" className="h-7 w-7 text-amber-600 hover:bg-amber-500/10" onClick={() => handleRevokeInvite(i.id)}><X className="h-3.5 w-3.5" /></Button>
+                                                    <Button variant="ghost" size="icon" className="h-7 w-7 text-amber-600 hover:bg-amber-500/10" onClick={() => handleRevokeInvite(i.id)}><CloseIcon className="h-3.5 w-3.5" /></Button>
                                                 </div>
                                             ))}
                                         </div>
@@ -409,7 +413,7 @@ export function CollaborationSettings({ user, onNavigateToProject }: Collaborati
                                                                 <div className="text-[10px] text-muted-foreground font-mono truncate">{conn.database}</div>
                                                             </div>
                                                         </div>
-                                                        {conn.isDefault && <Badge className="text-[9px] bg-emerald-500/10 text-emerald-600 border-none">DEFAULT</Badge>}
+                                                        {/* Connection is shared via team project linkage */}
                                                     </div>
                                                 </div>
                                             ))}
@@ -425,11 +429,4 @@ export function CollaborationSettings({ user, onNavigateToProject }: Collaborati
     );
 }
 
-function X({ className }: { className?: string }) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-            <path d="M18 6 6 18" />
-            <path d="m6 6 12 12" />
-        </svg>
-    );
-}
+
