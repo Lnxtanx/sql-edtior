@@ -7,6 +7,7 @@
 import { AgentRequest, AgentEvent } from '../types';
 import { streamRequest }            from '../stream';
 import { buildArtifact }            from '../artifacts/types';
+import { API_BASE_URL }             from '@/lib/api/client';
 
 export type ERDiagramScope = 'global' | 'table' | 'group';
 
@@ -34,7 +35,7 @@ export function streamERDiagramAgent(
   };
 
   const { abort } = streamRequest(
-    '/api/sql-editor/agent',   // re-uses sql-editor endpoint for now; swap when er-agent is ready
+    `${API_BASE_URL}/api/sql-editor/agent`,   // re-uses sql-editor endpoint for now; swap when er-agent is ready
     payload,
     (event, data) => {
       try {
@@ -54,19 +55,28 @@ function _parseEvent(event: string, data: string): AgentEvent | null {
   switch (event) {
     case 'chat_id':       return { type: 'chat_id',      chatId: JSON.parse(data).chat_id };
     case 'intent':        return { type: 'intent',       data: JSON.parse(data) };
-    case 'thinking':      return { type: 'thinking',     text: _tj(data)?.text ?? data };
+    case 'thinking':      return { type: 'thinking',     text: (_tj(data)?.text as string) ?? data };
     case 'plan':          return { type: 'plan',         data: JSON.parse(data) };
     case 'plan_update':   return { type: 'plan_update',  data: JSON.parse(data) };
     case 'tool_call':     return { type: 'tool_call',    data: JSON.parse(data) };
     case 'tool_result':   return { type: 'tool_result',  data: JSON.parse(data) };
-    case 'delta':         return { type: 'delta',        text: _tj(data)?.text as string ?? data };
+    case 'delta':         return { type: 'delta',        text: (_tj(data)?.text as string) ?? data };
     case 'artifact':      return { type: 'artifact',     data: buildArtifact(JSON.parse(data)) };
     case 'done':          return { type: 'done',         data: JSON.parse(data) };
-    case 'error':         return { type: 'error',        data: _tj(data) ?? { message: data } };
+    case 'error':         return { type: 'error',        data: parseErrorPayload(data) };
     default:              return null;
   }
 }
 
 function _tj(raw: string): Record<string, unknown> | null {
   try { return JSON.parse(raw); } catch { return null; }
+}
+
+function parseErrorPayload(raw: string): { message: string; code?: string } {
+  const parsed = _tj(raw);
+  if (!parsed) return { message: raw };
+  return {
+    message: typeof parsed.message === 'string' ? parsed.message : raw,
+    code: typeof parsed.code === 'string' ? parsed.code : undefined,
+  };
 }

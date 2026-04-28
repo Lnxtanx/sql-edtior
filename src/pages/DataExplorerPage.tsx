@@ -14,7 +14,7 @@ import type { TableInfo } from '@/lib/api/data-explorer/types';
 import { SEO, SEO_PAGES, getCanonicalUrl } from '@/lib/seo';
 
 export default function DataExplorerPage() {
-  const { user, loading: authLoading, signOut, signInWithGoogle } = useAuth();
+  const { user, loading: authLoading, isLoggingIn, signOut, signInWithGoogle } = useAuth();
   const [connectionId, setConnectionId] = useState<string | null>(null);
   const [showSettings, setShowSettings] = useState(false);
 
@@ -41,11 +41,14 @@ export default function DataExplorerPage() {
     setSelectedTable({ table, schema: schemaName });
   }, []);
 
-  // Auth loading state
-  if (authLoading) {
+  // Auth loading state or redirect processing
+  if (authLoading || isLoggingIn) {
     return (
-      <div className="h-screen w-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+      <div className="h-screen w-screen flex flex-col items-center justify-center gap-4 bg-background">
+        <Loader2 className="w-10 h-10 animate-spin text-primary" />
+        <p className="text-sm font-medium text-muted-foreground">
+          {isLoggingIn ? 'Signing you in...' : 'Initializing Data Explorer...'}
+        </p>
       </div>
     );
   }

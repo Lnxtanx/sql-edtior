@@ -54,8 +54,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Shared login handler — used by both redirect flow (URL code) and popup fallback
     const handleGoogleLogin = useCallback(async (code: string) => {
         setIsLoggingIn(true);
+        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const redirectUri = isLocal ? undefined : window.location.origin;
+        
+        console.log('[Auth] Attempting Google login with:', { 
+            isLocal, 
+            redirectUri, 
+            origin: window.location.origin,
+            hostname: window.location.hostname 
+        });
+
         try {
-            const response = await loginWithGoogle(code);
+            const response = await loginWithGoogle(code, redirectUri);
             const { user: dbUser, sessionExpiresAt, isNewUser } = response;
 
             const mappedUser: User = {

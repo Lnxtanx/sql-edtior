@@ -9,6 +9,7 @@
 import { AgentRequest, AgentEvent, ChatMessage } from '../types';
 import { buildArtifact }                          from '../artifacts/types';
 import { streamRequest }                          from '../stream';
+import { API_BASE_URL }                           from '@/lib/api/client';
 import type { CompilationResult, CompilationSummary, CompilationLayer } from '@/lib/schema-compiler/types';
 import { 
   extractCompilationSummary, 
@@ -189,7 +190,7 @@ export function streamSQLEditorAgent(
   };
 
   const { abort } = streamRequest(
-    '/api/sql-editor/agent',
+    `${API_BASE_URL}/api/sql-editor/agent`,
     payload,
     (event, data) => {
       try {

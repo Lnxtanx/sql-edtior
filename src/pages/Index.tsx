@@ -15,14 +15,21 @@ import { Loader2 } from 'lucide-react';
 import { GraphStats } from '@/lib/schema-workspace';
 import { SettingsModal } from '@/components/settings';
 import { CurrentFileProvider } from '@/components/connection/CurrentFileContext';
-import { acceptProjectInvitation, acceptTeamInvitation, getInvitationInfo, InvitationInfo } from '@/lib/file-management/api/client';
+import { 
+  acceptProjectInvitation, 
+  declineProjectInvitation,
+  acceptTeamInvitation, 
+  declineTeamInvitation,
+  getInvitationInfo, 
+  InvitationInfo 
+} from '@/lib/file-management/api/client';
 import { InvitationReviewModal } from '@/components/auth/InvitationReviewModal';
 
 import { SubgraphConfig } from '@/components/schema-workspace/SubgraphPanel';
 import { SEO, SEO_PAGES, getCanonicalUrl } from '@/lib/seo';
 
 export default function Index() {
-  const { user, signInWithGoogle, signOut, loading: authLoading } = useAuth();
+  const { user, signInWithGoogle, signOut, loading: authLoading, isLoggingIn } = useAuth();
 
   const pageSeo = SEO_PAGES.home;
 
@@ -305,9 +312,16 @@ export default function Index() {
   const stableTables = useMemo(() => schema?.tables ?? [], [schema]);
   const stableRelationships = useMemo(() => schema?.relationships ?? [], [schema]);
 
-  // Show loading only for initial data fetch
-  if (authLoading) {
-    return <div className="h-screen w-screen flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-blue-500" /></div>;
+  // Show loading only for initial data fetch or redirect auth processing
+  if (authLoading || isLoggingIn) {
+    return (
+      <div className="h-screen w-screen flex flex-col items-center justify-center gap-4 bg-background">
+        <Loader2 className="w-10 h-10 animate-spin text-primary" />
+        <p className="text-sm font-medium text-muted-foreground">
+          {isLoggingIn ? 'Signing you in...' : 'Initializing workspace...'}
+        </p>
+      </div>
+    );
   }
 
   return (

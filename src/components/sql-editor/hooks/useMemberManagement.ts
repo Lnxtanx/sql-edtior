@@ -7,7 +7,7 @@
 
 import { useCallback, useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { ApiError, getCsrfToken } from '@/lib/api/client';
+import { ApiError, getCsrfToken, API_BASE_URL } from '@/lib/api/client';
 import { 
   isPermissionError, 
   formatPermissionErrorMessage 
@@ -84,7 +84,7 @@ export function useMemberManagement({
     setError(null);
 
     try {
-      const response = await fetch(`/api/projects/${projectId}/members`);
+      const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}/members`);
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -132,7 +132,7 @@ export function useMemberManagement({
 
       try {
         await performSaveAction(async () => {
-          const response = await fetch(`/api/projects/${projectId}/members`, {
+          const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}/members`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -222,7 +222,7 @@ export function useMemberManagement({
       try {
         await performSaveAction(async () => {
           const response = await fetch(
-            `/api/projects/${projectId}/members/${userId}`,
+            `${API_BASE_URL}/api/projects/${projectId}/members/${userId}`,
             {
               method: 'DELETE',
               headers: {
@@ -312,7 +312,7 @@ export function useMemberManagement({
       try {
         await performSaveAction(async () => {
           const response = await fetch(
-            `/api/projects/${projectId}/members/${userId}`,
+            `${API_BASE_URL}/api/projects/${projectId}/members/${userId}`,
             {
               method: 'PATCH',
               headers: {
@@ -422,7 +422,7 @@ export function useProjectMembers({
     const fetchMembers = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`/api/projects/${projectId}/members`);
+        const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}/members`);
         if (!response.ok) throw new Error('Failed to fetch members');
         const data = await response.json();
         setMembers(data.members || []);

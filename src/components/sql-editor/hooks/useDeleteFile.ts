@@ -7,7 +7,7 @@
 
 import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
-import { ApiError, getCsrfToken } from '@/lib/api/client';
+import { ApiError, getCsrfToken, API_BASE_URL } from '@/lib/api/client';
 import { 
   isPermissionError, 
   formatPermissionErrorMessage 
@@ -80,7 +80,7 @@ export function useDeleteFile({
       // Guard the operation with permission check
       await performSaveAction(async () => {
         // Call API to delete file
-        const response = await fetch(`/api/files/${fileId}`, {
+        const response = await fetch(`${API_BASE_URL}/api/files/${fileId}`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',

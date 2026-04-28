@@ -11,6 +11,8 @@ export interface EnhancePromptResult {
   original:  string;
 }
 
+import { API_BASE_URL } from '../api/client';
+
 /**
  * Enhance a user prompt using the LLM.
  * Returns the enhanced version. Falls back to the original on any error.
@@ -29,7 +31,7 @@ export async function enhancePrompt(
   }
 
   try {
-    const response = await fetch('/api/ai/enhance-prompt', {
+    const response = await fetch(`${API_BASE_URL}/api/ai/enhance-prompt`, {
       method:      'POST',
       headers:     { 'Content-Type': 'application/json' },
       credentials: 'include',
