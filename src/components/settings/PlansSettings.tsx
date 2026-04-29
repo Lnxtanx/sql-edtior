@@ -166,6 +166,8 @@ export function PlansSettings() {
                     color: '#0f172a',
                 },
                 handler: async (response: any) => {
+                    // Restore pointer events so UI is clickable again
+                    document.body.style.pointerEvents = 'auto';
                     try {
                         toast.loading('Verifying payment...', { id: 'payment-verify' });
                         await verifyPayment({
@@ -186,15 +188,22 @@ export function PlansSettings() {
                 modal: {
                     ondismiss: () => {
                         setIsUpgrading(null);
+                        // Restore pointer events if user cancels
+                        document.body.style.pointerEvents = 'auto';
                     }
                 }
             };
 
             const rzp = new (window as any).Razorpay(options);
+            
             rzp.on('payment.failed', function (response: any) {
+                document.body.style.pointerEvents = 'auto';
                 toast.error(`Payment failed: ${response.error.description}`);
                 setIsUpgrading(null);
             });
+
+            // Force pointer events to auto before opening to bypass Dialog lock
+            document.body.style.pointerEvents = 'auto';
             rzp.open();
         } catch (err: any) {
             console.error('Upgrade failed:', err);
